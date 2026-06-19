@@ -15,7 +15,7 @@
     "calculateExercises": "tsc && node exerciseCalculator.ts"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.4",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.3",
