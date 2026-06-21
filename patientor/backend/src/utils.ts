@@ -1,73 +1,30 @@
-import { type NewPatientEntry, Gender } from "./types.ts";
+import { type Request, type Response, type NextFunction } from "express";
+import { z } from "zod";
 
-export const parseNewPatientEntry = (object: unknown): NewPatientEntry => {
-  if (!object || typeof object !== "object") {
-    throw new Error("Inccorect or missing data");
+import { NewPatientEntrySchema } from "./types.ts";
+
+export const newPatientParser = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  try {
+    NewPatientEntrySchema.parse(req.body);
+    next();
+  } catch (error: unknown) {
+    next(error);
   }
+};
 
-  if (
-    "name" in object &&
-    "dateOfBirth" in object &&
-    "ssn" in object &&
-    "gender" in object &&
-    "occupation" in object
-  ) {
-    const newEntry: NewPatientEntry = {
-      name: parseName(object.name),
-      dateOfBirth: parseDateOfBirth(object.dateOfBirth),
-      ssn: parseSsn(object.ssn),
-      gender: parseGender(object.gender),
-      occupation: parseOccupation(object.occupation),
-    };
-    return newEntry;
+export const errorMiddleware = (
+  error: unknown,
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (error instanceof z.ZodError) {
+    res.status(400).send({ error: error.issues });
+  } else {
+    next(error);
   }
-
-  throw new Error("Inccorect data: some fields were missing");
-};
-
-const isString = (text: unknown): text is string => {
-  return typeof text === "string" || text instanceof String;
-};
-
-const isDate = (date: string): boolean => {
-  return Boolean(Date.parse(date));
-};
-
-const isGender = (gender: string): gender is Gender => {
-  return (Object.values(Gender) as string[]).includes(gender);
-};
-
-const parseName = (name: unknown): string => {
-  if (!isString(name)) {
-    throw new Error("Incorrect or missing name");
-  }
-  return name;
-};
-
-const parseDateOfBirth = (date: unknown): string => {
-  if (!isString(date) || !isDate(date)) {
-    throw new Error("Incorrect or missing date of birth: " + date);
-  }
-  return date;
-};
-
-const parseSsn = (ssn: unknown): string => {
-  if (!isString(ssn)) {
-    throw new Error("Incorrect or missing ssn");
-  }
-  return ssn;
-};
-
-const parseGender = (gender: unknown): Gender => {
-  if (!isString(gender) || !isGender(gender)) {
-    throw new Error("Incorrect or missing gender");
-  }
-  return gender;
-};
-
-const parseOccupation = (occupation: unknown): string => {
-  if (!isString(occupation)) {
-    throw new Error("Incorrect or missing occupation");
-  }
-  return occupation;
 };
