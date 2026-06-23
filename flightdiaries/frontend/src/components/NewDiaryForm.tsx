@@ -11,7 +11,6 @@ interface newDiaryFormProps {
 
 const NewDiaryForm = ({ addDiary }: newDiaryFormProps) => {
   const [date, setDate] = useState<string>(today);
-  console.log(date);
   const [weather, setWeather] = useState<string>("");
   const [visibility, setVisibility] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -20,9 +19,6 @@ const NewDiaryForm = ({ addDiary }: newDiaryFormProps) => {
     e.preventDefault();
     addDiary({ date, weather, visibility, comment });
 
-    setDate("");
-    setWeather("");
-    setVisibility("");
     setComment("");
   };
 
