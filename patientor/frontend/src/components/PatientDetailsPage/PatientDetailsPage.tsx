@@ -6,7 +6,7 @@ import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import TransgenderIcon from "@mui/icons-material/Transgender";
 
-import type { Entry, NewEntry, Patient, Diagnosis, Gender } from "../../types";
+import { Entry, NewEntry, Patient, Diagnosis, Gender } from "../../types";
 import patientService from "../../services/patients";
 import HospitalEntry from "./HospitalEntry";
 import OccupationalEntry from "./OccupationalEntry";
@@ -104,11 +104,11 @@ const genderSymbol = (gender: Gender) => {
   };
 
   switch (gender) {
-    case "female":
+    case Gender.Female:
       return <FemaleIcon sx={iconSx} fontSize="large" />;
-    case "male":
+    case Gender.Male:
       return <MaleIcon sx={iconSx} fontSize="large" />;
-    case "other":
+    case Gender.Other:
       return <TransgenderIcon sx={iconSx} fontSize="large" />;
     default:
       const exhaustiveCheck: never = gender;
