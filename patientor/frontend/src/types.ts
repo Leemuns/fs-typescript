@@ -1,18 +1,27 @@
+import z from "zod";
+
 export interface Diagnosis {
   code: string;
   name: string;
   latin?: string;
 }
 
-const HealthCheckRating = {
+export const HealthCheckRating = {
   Healthy: 0,
   LowRisk: 1,
   HighRisk: 2,
   CriticalRisk: 3,
 } as const;
 
-type HealthCheckRating =
+export type HealthCheckRating =
   (typeof HealthCheckRating)[keyof typeof HealthCheckRating];
+
+export const healthCheckRatingSchema = z.union([
+  z.literal(HealthCheckRating.Healthy),
+  z.literal(HealthCheckRating.LowRisk),
+  z.literal(HealthCheckRating.HighRisk),
+  z.literal(HealthCheckRating.CriticalRisk),
+]);
 
 interface BaseEntry {
   id: string;
@@ -22,7 +31,7 @@ interface BaseEntry {
   diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge?: {
     date: string;
@@ -30,7 +39,7 @@ interface HospitalEntry extends BaseEntry {
   };
 }
 
-interface OccupationalHealthcareEntry extends BaseEntry {
+export interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
   sickLeave?: {
@@ -39,7 +48,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
   };
 }
 
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }
@@ -48,6 +57,26 @@ export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+
+export type NewHospitalEntry = Omit<HospitalEntry, "id">;
+export type NewOccupationalHealthcareEntry = Omit<
+  OccupationalHealthcareEntry,
+  "id"
+>;
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, "id">;
+
+export type NewEntry =
+  | NewHospitalEntry
+  | NewOccupationalHealthcareEntry
+  | NewHealthCheckEntry;
+
+export const EntryType = {
+  HealthCheck: "HealthCheck",
+  Hospital: "Hospital",
+  OccupationalHealthcare: "OccupationalHealthcare",
+} as const;
+
+export type EntryType = (typeof EntryType)[keyof typeof EntryType];
 
 export enum Gender {
   Male = "male",
